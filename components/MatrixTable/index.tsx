@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import { useContext, useState, useEffect } from 'react'
 import { MatrixTableContext, MatrixTableContextProvider } from './context'
 import fetch from 'node-fetch';
-import { emptyMatrix } from '../../constants/constants'
+// import { emptyMatrix } from '../../constants/constants'
 
 type Props = {
   initialMatrix?: import('../../types').Matrix
@@ -25,24 +25,25 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
   const api = "http://localhost:3000/api/"
   const matrix_data_api = api + "pricing"
 
-  const [matrixData, setMatrixData] = useState([])
-  const [matrixData_arr, setMatrixData_arr] = useState([]);
+  const [matrixDataArr, setMatrixDataArr] = useState([]);
   const temp_arr = []
 
-  const [temData, setTempData] = useState({})
   function fetch_data() {
     fetch(matrix_data_api)
       .then(response => response.json())
       .then(data => {
-        setMatrixData(data)
-        setTempData(data)
-        Object.keys(data).forEach(key => temp_arr.push({ name: key, value: data[key] }))
-        setMatrixData_arr(temp_arr)
+        dispatch({type: 'SET_MATRIX', payload: data})
       })
   }
+
   useEffect(() => {
     fetch_data()
   }, [])
+
+  useEffect(() => {
+    Object.keys(matrix).forEach(key => temp_arr.push({ name: key, value: matrix[key] }))
+    setMatrixDataArr(temp_arr)
+  }, [matrix])
 
   // Handlers ---------------------------------------------------------------- //
   // You can save (to api) the matrix here. Remember to update originalMatrix when done.
@@ -52,7 +53,7 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
         'Accept': 'application/json'
       },
       method: 'POST',
-      body: JSON.stringify(matrixData)
+      body: JSON.stringify(matrix)
     });
     const json = await response.json();
     alert(json.message)
@@ -67,16 +68,14 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
     fetch_data()
   }
   const clear = async () => {
-    setMatrixData(emptyMatrix)
-    Object.keys(emptyMatrix).forEach(key => temp_arr.push({ name: key, value: emptyMatrix[key] }))
-    setMatrixData_arr(temp_arr)
+    dispatch({type: 'SET_ORIGINAL_MATRIX', payload: originalMatrix})
   }
 
   // Effects ----------------------------------------------------------------- //
 
   // Rendering --------------------------------------------------------------- //
 
-  const matrixDataTable = matrixData_arr.map((item, index) => {
+  const matrixDataTable = matrixDataArr.map((item, index) => {
     return (
       <tr key={index}>
         <td style={{ padding: "8px", border: "1px solid #ddd" }}>
@@ -126,7 +125,7 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
         break;
     }
     console.log(item_value)
-    const newData = matrixData_arr.map(row => {
+    const newData = matrixDataArr.map(row => {
       if (row.name === item_name) {
         return {
           ...row,
@@ -135,7 +134,7 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
       }
       return row;
     });
-    setMatrixData_arr(newData)
+    setMatrixDataArr(newData)
   }
 
   const handleKeyDown = (e) => {
