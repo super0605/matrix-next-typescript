@@ -1,9 +1,6 @@
 import React, { createContext, useReducer, useEffect, useState } from 'react'
 
 
-
-
-
 /**
  * This is the 
  */
@@ -77,9 +74,6 @@ const emptyMatrix = {
     "unlimited": 0
   }
 }
-
-
-
 
 const defaultState: MatrixTableState = {
   matrix: emptyMatrix,
