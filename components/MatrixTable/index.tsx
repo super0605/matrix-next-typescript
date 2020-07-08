@@ -2,6 +2,7 @@ import classnames from 'classnames'
 import { useContext, useState, useEffect } from 'react'
 import { MatrixTableContext, MatrixTableContextProvider } from './context'
 import fetch from 'node-fetch';
+import { emptyMatrix } from '../../constants/constants'
 
 type Props = {
   initialMatrix?: import('../../types').Matrix
@@ -66,17 +67,20 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
     fetch_data()
   }
   const clear = async () => {
-    const response = await fetch(api + 'clear-pricing', {
-      headers: {
-        'Accept': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify(matrixData)
-    });
-    const json = await response.json();
-    alert(json.message)
-    setEditing(false)
-    fetch_data()
+    setMatrixData(emptyMatrix)
+    Object.keys(emptyMatrix).forEach(key => temp_arr.push({ name: key, value: emptyMatrix[key] }))
+    setMatrixData_arr(temp_arr)
+    // const response = await fetch(api + 'clear-pricing', {
+    //   headers: {
+    //     'Accept': 'application/json'
+    //   },
+    //   method: 'POST',
+    //   body: JSON.stringify(matrixData)
+    // });
+    // const json = await response.json();
+    // alert(json.message)
+    // setEditing(false)
+    // fetch_data()
   }
 
   // Effects ----------------------------------------------------------------- //
@@ -157,11 +161,7 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
       // Check if it's a "e" (69), "." (190), "+" (187) or "-" (189)
       checkIfNum = e.keyCode === 69 || e.keyCode === 187 || e.keyCode === 189;
     }
-    const inputVal = e.target.value;
-    console.log("inputvalu ===>", inputVal)
-    if (inputVal.length > 1) {
-      checkIfNum = inputVal[2] === 0;
-    }
+    
     return checkIfNum && e.preventDefault();
   }
 
