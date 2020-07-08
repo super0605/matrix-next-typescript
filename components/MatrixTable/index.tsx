@@ -91,21 +91,21 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
         </td>
         <td style={{ padding: "8px", border: "1px solid #ddd" }}>
           {isEditing ? (
-            <input type="number" value={item.value.lite} onChange={(e) => handleChange(e, item.name, item.value, 0)}></input>
+            <input type="number" value={item.value.lite} onChange={(e) => handleChange(e, item.name, item.value, 0)} onKeyDown={(e) => handleKeyDown(e)}></input>
           ) : (
               item.value.lite
             )}
         </td>
         <td style={{ padding: "8px", border: "1px solid #ddd" }}>
           {isEditing ? (
-            <input type="number" value={item.value.standard} onChange={(e) => handleChange(e, item.name, item.value, 1)}></input>
+            <input type="number" value={item.value.standard} onChange={(e) => handleChange(e, item.name, item.value, 1)} onKeyDown={(e) => handleKeyDown(e)}></input>
           ) : (
               item.value.standard
             )}
         </td>
         <td style={{ padding: "8px", border: "1px solid #ddd" }}>
           {isEditing ? (
-            <input type="number" value={item.value.unlimited} onChange={(e) => handleChange(e, item.name, item.value, 2)}></input>
+            <input type="number" value={item.value.unlimited} onChange={(e) => handleChange(e, item.name, item.value, 2)} onKeyDown={(e) => handleKeyDown(e)}></input>
           ) : (
               item.value.unlimited
             )}
@@ -115,18 +115,19 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
   });
 
   const handleChange = async (e, item_name, item_value, item_key) => {
+    const inputVal = parseFloat(e.target.value);
 
     switch (item_key) {
       case 0:
-        item_value.lite = e.target.value;
-        item_value.standard = 2 * e.target.value;
-        item_value.unlimited = 3 * e.target.value;
+        item_value.lite = inputVal;
+        item_value.standard = 2 * inputVal;
+        item_value.unlimited = 3 * inputVal;
         break;
       case 1:
-        item_value.standard = e.target.value;
+        item_value.standard = inputVal;
         break;
       case 2:
-        item_value.unlimited = e.target.value;
+        item_value.unlimited = inputVal;
         break;
       default:
         break;
@@ -143,6 +144,27 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
     });
     setMatrixData_arr(newData)
   }
+
+  const handleKeyDown = (e) => {
+    
+    // Prevent characters that are not numbers ("e", ".", "+" & "-") ✨
+    let checkIfNum;
+    if (e.key !== undefined) {
+      // Check if it's a "e", ".", "+" or "-"
+      checkIfNum = e.key === "e" || e.key === "+" || e.key === "-";
+    }
+    else if (e.keyCode !== undefined) {
+      // Check if it's a "e" (69), "." (190), "+" (187) or "-" (189)
+      checkIfNum = e.keyCode === 69 || e.keyCode === 187 || e.keyCode === 189;
+    }
+    const inputVal = e.target.value;
+    console.log("inputvalu ===>", inputVal)
+    if (inputVal.length > 1) {
+      checkIfNum = inputVal[2] === 0;
+    }
+    return checkIfNum && e.preventDefault();
+  }
+
   return (
     <div className={classnames(['container', className])} {...props}>
       <button onClick={save}>Save</button>
