@@ -70,17 +70,6 @@ const MatrixTable: import('react').FC<Omit<Props, 'initialMatrix'>> = ({ classNa
     setMatrixData(emptyMatrix)
     Object.keys(emptyMatrix).forEach(key => temp_arr.push({ name: key, value: emptyMatrix[key] }))
     setMatrixData_arr(temp_arr)
-    // const response = await fetch(api + 'clear-pricing', {
-    //   headers: {
-    //     'Accept': 'application/json'
-    //   },
-    //   method: 'POST',
-    //   body: JSON.stringify(matrixData)
-    // });
-    // const json = await response.json();
-    // alert(json.message)
-    // setEditing(false)
-    // fetch_data()
   }
 
   // Effects ----------------------------------------------------------------- //

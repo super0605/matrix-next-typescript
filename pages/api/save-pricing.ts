@@ -43,12 +43,14 @@ export default async (
 
     if (valid) {
       fs.writeFile("./public/pricing.json", req.body, (err) => {
-        if (err) throw err;
+        if (err) {
+          res.statusCode = 500;
+          res.json({ error: "Fail to save data" });
+        }
         console.log("Data written to file");
+        res.statusCode = 200;
+        res.json({ message: "success" });
       });
-
-      res.statusCode = 200;
-      res.json({ message: "success" });
     }
   } catch (e) {
     console.error(e);
